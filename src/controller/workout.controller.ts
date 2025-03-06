@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { PostgrestError } from '@supabase/supabase-js';
+import { MuscleGroup } from 'src/interfaces/MuscleGroup';
 
 import { WorkoutPlan } from 'src/interfaces/WorkoutPlan';
 import { WorkoutService } from 'src/services/workout/workout.service';
@@ -39,10 +40,12 @@ export class WorkoutController {
 
   // Endpoint per testare il collegamento con Supabase
   @Get('muscle_groups/list')
-  async getMuscleGroups(): Promise<any> {
+  async getMuscleGroups(): Promise<
+    MuscleGroup[] | { message: string; details: string }
+  > {
     try {
       // Otteniamo i piani di allenamento
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       const muscleGroups = await this.workoutService.getMuscleGroups();
 
       return muscleGroups;

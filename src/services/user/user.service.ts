@@ -1,20 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import { Inject, Injectable } from '@nestjs/common';
+
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Exercise } from 'src/interfaces/Exercise';
 
 @Injectable()
 export class UserService {
-  private supabase: SupabaseClient;
-
-  constructor(private configService: ConfigService) {
-    const url = this.configService.get<string>('SUPABASE_URL') ?? '';
-    const key = this.configService.get<string>('SUPABASE_KEY') ?? '';
-
-    this.supabase = createClient(url, key);
-  }
+  constructor(@Inject('SUPABASE_CLIENT') private supabase: SupabaseClient) {}
 
   // Metodo per ottenere gli esercizi per un determinato workout_plan_id
-  async getExerciseList(workoutPlanId: number): Promise<any> {
+  async getExerciseList(workoutPlanId: number): Promise<Exercise[]> {
     const { data, error } = await this.supabase
       .from('exercises')
       .select('*')
@@ -25,6 +19,6 @@ export class UserService {
       throw error; // Lancia l'errore senza modificarlo
     }
 
-    return data;
+    return data as Exercise[];
   }
 }
