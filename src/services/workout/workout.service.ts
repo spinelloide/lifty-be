@@ -25,7 +25,22 @@ export class WorkoutService {
       throw error; // Lancia l'errore senza modificarlo
     }
 
-    console.log('Data:', data); // Logga i dati per verificare il risultato
+    // console.log('Data:', data);
+
+    return data as WorkoutPlan[];
+  }
+
+  async getMuscleGroups(): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('muscle_groups')
+      .select('*');
+
+    if (error) {
+      console.error('Error:', error); // Aggiungi un log dell'errore
+      throw error; // Lancia l'errore senza modificarlo
+    }
+
+    // console.log('Muscle groups:', data);
 
     return data as WorkoutPlan[];
   }
