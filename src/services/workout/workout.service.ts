@@ -67,4 +67,20 @@ export class WorkoutService {
 
     return data as WorkoutPlan;
   }
+
+  async getWorkoutPlanById(id: number): Promise<WorkoutPlan | null> {
+    const { data, error }: { data: WorkoutPlan | null; error: any } =
+      await this.supabase
+        .from('workout_plans')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error) {
+      console.error('Error retrieving workout plan:', error);
+      throw error;
+    }
+
+    return data as WorkoutPlan;
+  }
 }
