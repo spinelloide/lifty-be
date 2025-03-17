@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { CreateWorkoutDto } from 'src/dto/create-workout.dto';
 import { MuscleGroup } from 'src/interfaces/MuscleGroup';
 import { WorkoutPlan } from 'src/interfaces/WorkoutPlan';
 
@@ -36,5 +37,34 @@ export class WorkoutService {
     // console.log('Muscle groups:', data);
 
     return data as MuscleGroup[];
+  }
+
+  // Metodo per creare un nuovo piano di allenamento
+  async createWorkoutPlan(
+    createWorkoutDto: CreateWorkoutDto,
+  ): Promise<WorkoutPlan> {
+    const { title, description, training_days, user_id } = createWorkoutDto;
+
+    // Map training_days from DTO to days in database schema
+    const { data, error }: { data: WorkoutPlan | null; error: any } =
+      await this.supabase
+        .from('workout_plans')
+        .insert([
+          {
+            title,
+            description,
+            training_days,
+            user_id,
+          },
+        ])
+        .select()
+        .single();
+
+    if (error) {
+      console.error('Error creating workout plan:', error);
+      throw error;
+    }
+
+    return data as WorkoutPlan;
   }
 }
