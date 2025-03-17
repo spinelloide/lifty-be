@@ -30,4 +30,10 @@ export class AuthController {
       };
     }
   }
+
+  @Post('login')
+  async login(@Body() loginDto: { email: string; password: string }) {
+    const { email, password } = loginDto;
+    return this.authService.login(email, password);
+  }
 }

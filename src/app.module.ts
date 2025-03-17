@@ -10,9 +10,17 @@ import { UserService } from './services/user/user.service';
 import { AuthService } from './services/auth/auth.service';
 import { SupabaseModule } from './modules/supabase/supabase.module';
 import { AuthController } from './controller/auth.controller';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [ConfigModule.forRoot(), SupabaseModule],
+  imports: [
+    ConfigModule.forRoot(),
+    SupabaseModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET, // Configura il secret del JWT, recuperato dal file .env
+      signOptions: { expiresIn: '1h' }, // Opzionale: puoi definire il tempo di scadenza del token
+    }),
+  ],
   controllers: [
     AppController,
     WorkoutController,
