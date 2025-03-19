@@ -10,7 +10,7 @@ export class UserService {
   // Metodo per ottenere gli esercizi per un determinato workout_plan_id
   async getExerciseList(workoutPlanId: number): Promise<Exercise[]> {
     const { data, error } = await this.supabase
-      .from('exercises')
+      .from('user_exercises')
       .select('*')
       .eq('workout_plan_id', workoutPlanId); // Aggiungi il filtro per workout_plan_id
 

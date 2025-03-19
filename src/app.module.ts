@@ -11,6 +11,8 @@ import { AuthService } from './services/auth/auth.service';
 import { SupabaseModule } from './modules/supabase/supabase.module';
 import { AuthController } from './controller/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
+import { ExerciseController } from './controller/exercise.controller';
+import { ExerciseService } from './services/exercise/exercise.service';
 
 @Module({
   imports: [
@@ -25,8 +27,15 @@ import { JwtModule } from '@nestjs/jwt';
     AppController,
     WorkoutController,
     UsersController,
+    ExerciseController,
     AuthController,
   ],
-  providers: [AppService, WorkoutService, UserService, AuthService],
+  providers: [
+    AppService,
+    WorkoutService,
+    UserService,
+    AuthService,
+    ExerciseService,
+  ],
 })
 export class AppModule {}
