@@ -1,8 +1,10 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { PostgrestError } from '@supabase/supabase-js';
 
 import { ExerciseService } from 'src/services/exercise/exercise.service';
 import { ExerciseResponse } from 'src/services/exercise/response/exercise-data-response';
+import { CreateExerciseDto } from 'src/dto/create-exercise.dto';
+import { Exercise } from 'src/interfaces/Exercise';
 
 @Controller('exercise')
 export class ExerciseController {
@@ -25,6 +27,31 @@ export class ExerciseController {
       if (error instanceof PostgrestError) {
         return {
           message: 'Error retrieving exercises from Supabase',
+          details: error.message,
+        };
+      }
+
+      return {
+        message: 'An unexpected error occurred',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  @Post()
+  async createExercise(
+    @Body() createExerciseDto: CreateExerciseDto,
+  ): Promise<Exercise | { message: string; details: string }> {
+    try {
+      const exercise =
+        await this.exerciseService.addUserExercise(createExerciseDto);
+      return exercise;
+    } catch (error) {
+      console.error('Error creating exercise:', error);
+
+      if (error instanceof PostgrestError) {
+        return {
+          message: 'Error creating exercise in Supabase',
           details: error.message,
         };
       }
