@@ -68,7 +68,8 @@ export class AuthService {
     // Crea il payload del JWT
     const payload = {
       username: user.username,
-      sub: user.email,
+      email: user.email,
+      id: user.id,
     };
 
     // Genera il JWT

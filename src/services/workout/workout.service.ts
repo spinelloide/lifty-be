@@ -43,7 +43,8 @@ export class WorkoutService {
   async createWorkoutPlan(
     createWorkoutDto: CreateWorkoutDto,
   ): Promise<WorkoutPlan> {
-    const { title, description, training_days, user_id } = createWorkoutDto;
+    const { title, description, training_days, duration, user_id } =
+      createWorkoutDto;
 
     // Map training_days from DTO to days in database schema
     const { data, error }: { data: WorkoutPlan | null; error: any } =
@@ -54,6 +55,7 @@ export class WorkoutService {
             title,
             description,
             training_days,
+            duration,
             user_id,
           },
         ])
@@ -66,6 +68,37 @@ export class WorkoutService {
     }
 
     return data as WorkoutPlan;
+  }
+
+  async deleteWorkoutPlan(id: number): Promise<WorkoutPlan | null> {
+    // First delete all associated exercises
+    const { error: exerciseDeleteError } = await this.supabase
+      .from('user_exercises')
+      .delete()
+      .eq('workout_plan_id', id);
+
+    if (exerciseDeleteError) {
+      console.error(
+        'Error deleting associated exercises:',
+        exerciseDeleteError,
+      );
+      throw exerciseDeleteError;
+    }
+
+    // Then delete the workout plan
+    const { data, error }: { data: WorkoutPlan | null; error: any } =
+      await this.supabase
+        .from('workout_plans')
+        .delete()
+        .eq('id', id)
+        .select()
+        .single();
+
+    if (error) {
+      console.error('Error deleting workout plan:', error);
+      throw error;
+    }
+    return data;
   }
 
   async getWorkoutPlanById(id: number): Promise<WorkoutPlan | null> {

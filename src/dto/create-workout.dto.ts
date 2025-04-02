@@ -17,5 +17,10 @@ export class CreateWorkoutDto {
   @IsNotEmpty()
   @IsNumber()
   @Min(1)
+  duration: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(1)
   user_id: number;
 }

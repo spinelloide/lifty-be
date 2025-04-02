@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { PostgrestError } from '@supabase/supabase-js';
 import { CreateWorkoutDto } from 'src/dto/create-workout.dto';
 import { MuscleGroup } from 'src/interfaces/MuscleGroup';
@@ -122,6 +122,38 @@ export class WorkoutController {
         };
       }
 
+      return {
+        message: 'An unexpected error occurred',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  @Delete('delete/:id')
+  async deleteWorkoutPlan(
+    @Param('id') id: number,
+  ): Promise<WorkoutPlan | { message: string; details: string }> {
+    if (!id) {
+      return { message: 'ID is required.', details: '' };
+    }
+    try {
+      const deletedWorkoutPlan =
+        await this.workoutService.deleteWorkoutPlan(id);
+      if (!deletedWorkoutPlan) {
+        return {
+          message: 'Workout plan not found',
+          details: `No workout plan found with id ${id}`,
+        };
+      }
+      return deletedWorkoutPlan;
+    } catch (error) {
+      console.error('Error deleting workout plan:', error);
+      if (error instanceof PostgrestError) {
+        return {
+          message: 'Error deleting workout plan from Supabase',
+          details: error.message,
+        };
+      }
       return {
         message: 'An unexpected error occurred',
         details: error instanceof Error ? error.message : 'Unknown error',
