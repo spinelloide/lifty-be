@@ -85,6 +85,16 @@ export class WorkoutService {
       throw exerciseDeleteError;
     }
 
+    const { error: daysDeleteError } = await this.supabase
+      .from('workout_day')
+      .delete()
+      .eq('workout_plan_id', id);
+
+    if (daysDeleteError) {
+      console.error('Error deleting associated exercises:', daysDeleteError);
+      throw daysDeleteError;
+    }
+
     // Then delete the workout plan
     const { data, error }: { data: WorkoutPlan | null; error: any } =
       await this.supabase
@@ -115,5 +125,40 @@ export class WorkoutService {
     }
 
     return data as WorkoutPlan;
+  }
+
+  async updateWorkoutPlanStatus(
+    id: number,
+    isActive: boolean,
+  ): Promise<WorkoutPlan | null> {
+    const { data, error }: { data: WorkoutPlan | null; error: any } =
+      await this.supabase
+        .from('workout_plans')
+        .update({ is_active: isActive })
+        .eq('id', id)
+        .select()
+        .single();
+
+    if (error) {
+      console.error('Error updating workout plan status:', error);
+      throw error;
+    }
+
+    return data as WorkoutPlan;
+  }
+
+  async getActiveWorkoutPlans(userId: number): Promise<WorkoutPlan[]> {
+    const { data, error } = await this.supabase
+      .from('workout_plans')
+      .select('*')
+      .eq('is_active', true)
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error retrieving active workout plans:', error);
+      throw error;
+    }
+
+    return data as WorkoutPlan[];
   }
 }

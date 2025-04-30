@@ -62,4 +62,37 @@ export class ExerciseController {
       };
     }
   }
+
+  @Get('list/:workoutPlanId/:day')
+  async getExerciseListByWorkoutIdAndDay(
+    @Param('workoutPlanId') workoutPlanId: number,
+    @Param('day') day: number,
+  ): Promise<ExerciseResponse[] | { message: string; details: string }> {
+    if (!day || !workoutPlanId) {
+      return { message: 'Day/workoutId is required.', details: '' };
+    }
+
+    try {
+      const exercises =
+        await this.exerciseService.getExercisesByWorkoutPlanAndDay(
+          workoutPlanId,
+          day,
+        );
+      return exercises;
+    } catch (error) {
+      console.error('Error retrieving exercises:', error);
+
+      if (error instanceof PostgrestError) {
+        return {
+          message: 'Error retrieving exercises from Supabase',
+          details: error.message,
+        };
+      }
+
+      return {
+        message: 'An unexpected error occurred',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
 }

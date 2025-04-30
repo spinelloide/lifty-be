@@ -13,6 +13,8 @@ import { AuthController } from './controller/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ExerciseController } from './controller/exercise.controller';
 import { ExerciseService } from './services/exercise/exercise.service';
+import { WorkoutDayService } from './services/workout_day/workout_day.service';
+import { WorkoutDayController } from './controller/workout_day.controller';
 
 @Module({
   imports: [
@@ -29,6 +31,7 @@ import { ExerciseService } from './services/exercise/exercise.service';
     UsersController,
     ExerciseController,
     AuthController,
+    WorkoutDayController,
   ],
   providers: [
     AppService,
@@ -36,6 +39,7 @@ import { ExerciseService } from './services/exercise/exercise.service';
     UserService,
     AuthService,
     ExerciseService,
+    WorkoutDayService,
   ],
 })
 export class AppModule {}

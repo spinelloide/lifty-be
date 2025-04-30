@@ -23,6 +23,24 @@ export class ExerciseService {
     return data as ExerciseResponse[];
   }
 
+  async getExercisesByWorkoutPlanAndDay(
+    workoutPlanId: number,
+    day: number,
+  ): Promise<ExerciseResponse[]> {
+    const { data, error } = await this.supabase
+      .from('user_exercises')
+      .select('*')
+      .eq('workout_plan_id', workoutPlanId)
+      .eq('day', day);
+
+    if (error) {
+      console.error('Error retrieving exercises:', error);
+      throw error;
+    }
+
+    return data as ExerciseResponse[];
+  }
+
   async addUserExercise(exercise: CreateExerciseDto): Promise<Exercise> {
     const { data, error } = await this.supabase
       .from('user_exercises')
