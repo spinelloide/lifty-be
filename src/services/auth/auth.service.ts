@@ -48,7 +48,7 @@ export class AuthService {
     // Controlla se l'utente esiste nel database
     const { data, error } = await this.supabase
       .from('users')
-      .select('id, email, username, password') // Recupera solo le informazioni necessarie
+      .select('id, email, username, password, name, surname') // Recupera solo le informazioni necessarie
       .eq('email', email)
       .single();
 
@@ -82,6 +82,8 @@ export class AuthService {
         id: user.id,
         email: user.email,
         username: user.username,
+        name: user.name,
+        surname: user.surname,
       },
     };
   }

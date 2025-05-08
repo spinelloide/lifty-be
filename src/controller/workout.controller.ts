@@ -18,13 +18,16 @@ export class WorkoutController {
   constructor(private readonly workoutService: WorkoutService) {}
 
   // Endpoint per testare il collegamento con Supabase
-  @Get('list')
-  async getWorkoutPlans(): Promise<
-    WorkoutPlan[] | { message: string; details: string }
-  > {
+  @Get('list/:userId')
+  async getWorkoutPlans(
+    @Param('userId') userId: number,
+  ): Promise<WorkoutPlan[] | { message: string; details: string }> {
     try {
+      if (!userId) {
+        return { message: 'User ID is required.', details: '' };
+      }
       // Otteniamo i piani di allenamento
-      const plans = await this.workoutService.getWorkoutPlans();
+      const plans = await this.workoutService.getWorkoutPlans(userId);
 
       return plans;
     } catch (error) {

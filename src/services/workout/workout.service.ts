@@ -9,10 +9,11 @@ export class WorkoutService {
   constructor(@Inject('SUPABASE_CLIENT') private supabase: SupabaseClient) {}
 
   // Metodo per ottenere i piani di allenamento
-  async getWorkoutPlans(): Promise<WorkoutPlan[]> {
+  async getWorkoutPlans(userId: number): Promise<WorkoutPlan[]> {
     const { data, error } = await this.supabase
       .from('workout_plans')
-      .select('*');
+      .select('*')
+      .eq('user_id', userId);
 
     if (error) {
       console.error('Error:', error); // Aggiungi un log dell'errore
