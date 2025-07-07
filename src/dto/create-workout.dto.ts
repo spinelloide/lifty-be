@@ -23,4 +23,7 @@ export class CreateWorkoutDto {
   @IsNumber()
   @Min(1)
   user_id: number;
+
+  @IsNumber()
+  completed_count?: number;
 }

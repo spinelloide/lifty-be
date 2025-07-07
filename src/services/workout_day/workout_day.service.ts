@@ -53,4 +53,45 @@ export class WorkoutDayService {
 
     return data as [];
   }
+
+  async updateDayLabel(dayId: number, label: string): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('workout_day')
+      .update({ label })
+      .eq('id', dayId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating workout day label:', error);
+      throw error;
+    }
+
+    return data;
+  }
+
+  async decrementDayCount(dayId: number): Promise<any> {
+    // Prendi il valore attuale
+    const { data: current, error: fetchError } = await this.supabase
+      .from('workout_day')
+      .select('count')
+      .eq('id', dayId)
+      .single();
+    if (fetchError) {
+      console.error('Error fetching workout day count:', fetchError);
+      throw fetchError;
+    }
+    const newCount = (current?.count ?? 1) - 1;
+    const { data, error } = await this.supabase
+      .from('workout_day')
+      .update({ count: newCount })
+      .eq('id', dayId)
+      .select()
+      .single();
+    if (error) {
+      console.error('Error decrementing workout day count:', error);
+      throw error;
+    }
+    return data;
+  }
 }

@@ -181,6 +181,34 @@ export class WorkoutController {
     }
   }
 
+  @Put(':id/decrement-completed')
+  async decrementCompletedCount(
+    @Param('id') id: number,
+  ): Promise<WorkoutPlan | { message: string; details: string }> {
+    try {
+      const updated = await this.workoutService.decrementCompletedCount(id);
+      if (!updated) {
+        return {
+          message: 'Workout plan not found',
+          details: `No workout plan found with id ${id}`,
+        };
+      }
+      return updated;
+    } catch (error) {
+      console.error('Error decrementing completed_count:', error);
+      if (error instanceof PostgrestError) {
+        return {
+          message: 'Error decrementing completed_count in Supabase',
+          details: error.message,
+        };
+      }
+      return {
+        message: 'An unexpected error occurred',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
   @Get('active/:userId')
   async getActiveWorkoutPlans(
     @Param('userId') userId: number,

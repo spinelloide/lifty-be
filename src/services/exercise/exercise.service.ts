@@ -55,4 +55,23 @@ export class ExerciseService {
 
     return data as Exercise;
   }
+
+  async bulkUpdateWeights(
+    updates: { id: number; weight: number[] }[],
+  ): Promise<any[]> {
+    const results: any[] = [];
+    for (const update of updates) {
+      const { data, error } = await this.supabase
+        .from('user_exercises')
+        .update({ weight: update.weight })
+        .eq('id', update.id)
+        .select();
+      if (error) {
+        console.error('Error updating weight:', error);
+        throw error;
+      }
+      results.push(data);
+    }
+    return results;
+  }
 }

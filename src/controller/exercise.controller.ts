@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { PostgrestError } from '@supabase/supabase-js';
 
 import { ExerciseService } from 'src/services/exercise/exercise.service';
@@ -89,6 +89,28 @@ export class ExerciseController {
         };
       }
 
+      return {
+        message: 'An unexpected error occurred',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  @Put('bulk-update')
+  async bulkUpdateWeights(
+    @Body('updates') updates: { id: number; weight: number[] }[],
+  ): Promise<any> {
+    try {
+      const result = await this.exerciseService.bulkUpdateWeights(updates);
+      return result;
+    } catch (error) {
+      console.error('Error bulk updating weights:', error);
+      if (error instanceof PostgrestError) {
+        return {
+          message: 'Error bulk updating weights in Supabase',
+          details: error.message,
+        };
+      }
       return {
         message: 'An unexpected error occurred',
         details: error instanceof Error ? error.message : 'Unknown error',

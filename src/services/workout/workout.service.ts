@@ -44,8 +44,14 @@ export class WorkoutService {
   async createWorkoutPlan(
     createWorkoutDto: CreateWorkoutDto,
   ): Promise<WorkoutPlan> {
-    const { title, description, training_days, duration, user_id } =
-      createWorkoutDto;
+    const {
+      title,
+      description,
+      training_days,
+      duration,
+      user_id,
+      completed_count,
+    } = createWorkoutDto;
 
     // Map training_days from DTO to days in database schema
     const { data, error }: { data: WorkoutPlan | null; error: any } =
@@ -58,6 +64,7 @@ export class WorkoutService {
             training_days,
             duration,
             user_id,
+            completed_count,
           },
         ])
         .select()
@@ -161,5 +168,30 @@ export class WorkoutService {
     }
 
     return data as WorkoutPlan[];
+  }
+
+  async decrementCompletedCount(planId: number): Promise<WorkoutPlan | null> {
+    // Prendi il valore attuale
+    const { data: current, error: fetchError } = await this.supabase
+      .from('workout_plans')
+      .select('completed_count')
+      .eq('id', planId)
+      .single();
+    if (fetchError) {
+      console.error('Error fetching completed_count:', fetchError);
+      throw fetchError;
+    }
+    const newCount = (current?.completed_count ?? 1) - 1;
+    const { data, error } = await this.supabase
+      .from('workout_plans')
+      .update({ completed_count: newCount })
+      .eq('id', planId)
+      .select()
+      .single();
+    if (error) {
+      console.error('Error decrementing completed_count:', error);
+      throw error;
+    }
+    return data as WorkoutPlan;
   }
 }
