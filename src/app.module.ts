@@ -15,10 +15,14 @@ import { ExerciseController } from './controller/exercise.controller';
 import { ExerciseService } from './services/exercise/exercise.service';
 import { WorkoutDayService } from './services/workout_day/workout_day.service';
 import { WorkoutDayController } from './controller/workout_day.controller';
+import { AiController } from './controller/ai.controller';
+import { AiService } from './services/ai/ai.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     SupabaseModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET, // Configura il secret del JWT, recuperato dal file .env
@@ -27,6 +31,7 @@ import { WorkoutDayController } from './controller/workout_day.controller';
   ],
   controllers: [
     AppController,
+    AiController,
     WorkoutController,
     UsersController,
     ExerciseController,
@@ -36,6 +41,7 @@ import { WorkoutDayController } from './controller/workout_day.controller';
   providers: [
     AppService,
     WorkoutService,
+    AiService,
     UserService,
     AuthService,
     ExerciseService,
