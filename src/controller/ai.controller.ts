@@ -11,6 +11,7 @@ export class AiController {
     const result = await this.aiService.generateStructuredResponse(text);
     return result;
   }
+
   @Post('generate-workout')
   async generateWorkout(@Body() body: GenerateWorkoutBody) {
     return this.aiService.generateWorkoutPlan(body);

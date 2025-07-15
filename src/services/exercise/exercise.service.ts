@@ -74,4 +74,19 @@ export class ExerciseService {
     }
     return results;
   }
+
+  async deleteExerciseId(id: number): Promise<Exercise[] | null> {
+    // First delete all associated exercises
+    const { data, error } = await this.supabase
+      .from('user_exercises')
+      .delete()
+      .eq('id', id)
+      .select();
+
+    if (error) {
+      console.error('Error deleting workout plan:', error);
+      throw error;
+    }
+    return data as Exercise[];
+  }
 }

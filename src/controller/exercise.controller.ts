@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { PostgrestError } from '@supabase/supabase-js';
 
 import { ExerciseService } from 'src/services/exercise/exercise.service';
@@ -108,6 +116,38 @@ export class ExerciseController {
       if (error instanceof PostgrestError) {
         return {
           message: 'Error bulk updating weights in Supabase',
+          details: error.message,
+        };
+      }
+      return {
+        message: 'An unexpected error occurred',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  @Delete('delete/:id')
+  async deleteExercise(
+    @Param('id') id: number,
+  ): Promise<Exercise[] | { message: string; details: string }> {
+    if (!id) {
+      return { message: 'ID is required.', details: '' };
+    }
+    try {
+      const deleteExercise = await this.exerciseService.deleteExerciseId(id);
+
+      if (!deleteExercise) {
+        return {
+          message: 'Exercise not found',
+          details: `No exercise found with id ${id}`,
+        };
+      }
+      return deleteExercise;
+    } catch (error) {
+      console.error('Error deleting exercise plan:', error);
+      if (error instanceof PostgrestError) {
+        return {
+          message: 'Error deleting exercise plan from Supabase',
           details: error.message,
         };
       }

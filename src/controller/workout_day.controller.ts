@@ -13,8 +13,6 @@ export class WorkoutDayController {
     @Param('id') id: number,
   ): Promise<any[] | { message: string; details: string }> {
     try {
-      // Otteniamo i piani di allenamento
-
       const daysList = await this.workoutDayService.getDaysByWorkoutPlanId(id);
 
       return daysList as [];
