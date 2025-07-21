@@ -63,6 +63,8 @@ Crea una scheda di allenamento per un utente con questi parametri:
 - Livello di esperienza: ${input.level}
 - Tipo di split: ${input.type}
 - Durata di ogni sessione: almeno 60-90 minuti
+- Gli esercizi devono avere \`day\` che vanno da 1 a ${input.days} (inclusi).
+- Crea esattamente ${input.days} giorni di workout, distribuiti secondo il tipo (\`muscle_split\`, \`push_pull\`, \`full_body\`).
 
 Obiettivi:
 1. Ogni giorno deve contenere abbastanza esercizi da riempire una sessione completa di almeno 60-90 minuti.
