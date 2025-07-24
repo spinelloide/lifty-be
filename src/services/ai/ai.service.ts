@@ -66,18 +66,19 @@ Crea una scheda di allenamento per un utente con questi parametri:
 - Gli esercizi devono avere \`day\` che vanno da 1 a ${input.days} (inclusi).
 - Crea esattamente ${input.days} giorni di workout, distribuiti secondo il tipo (\`muscle_split\`, \`push_pull\`, \`full_body\`).
 - Ogni giorno deve contenere almeno 5 esercizi se si tratta di bodybuilding, o 3-4 esercizi se si tratta di un programma di resistenza o funzionale.
-- La descrizione del workout deve essere breve ma informativa, adatta al livello dell'utente, massimo 2-3 frasi.
+- La descrizione del workout deve essere breve ma informativa, adatta al livello dell'utente, massimo 50 parole.
 
 Obiettivi:
 1. Ogni giorno deve contenere abbastanza esercizi da riempire una sessione completa di almeno 60-90 minuti.
-2. Tutti i principali gruppi muscolari devono essere allenati ogni settimana:
-   - chest
-   - back
-   - legs
-   - shoulders
-   - biceps
-   - triceps
-   - core (abs)
+2. Tutti i principali gruppi muscolari devono essere allenati ogni settimana, e devono usare questi ID:
+   - CHEST: 1
+   - BACK: 2
+   - TRICEPS: 3
+   - LEGS: 4
+   - BICEPS: 5
+   - SHOULDERS: 6
+   - CORE: 7
+   - FULL BODY: 8
 
 3. Distribuisci il lavoro muscolare in modo coerente con il tipo di allenamento:
    - 'push_pull': separa esercizi push (petto, spalle, tricipiti) e pull (dorso, bicipiti)
@@ -92,7 +93,7 @@ Obiettivi:
 
 6. Ogni esercizio deve contenere:
    - name
-   - muscle_group (in inglese)
+   - muscle_group (in inglese e in maiuscolo, tutto uppercase)
    - sets
    - reps
    - rest_time
