@@ -56,6 +56,25 @@ export class ExerciseService {
     return data as Exercise;
   }
 
+  async updateUserExercise(
+    id: string,
+    updates: Partial<CreateExerciseDto>,
+  ): Promise<Exercise> {
+    const { data, error } = await this.supabase
+      .from('user_exercises')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating exercise:', error);
+      throw error;
+    }
+
+    return data as Exercise;
+  }
+
   async bulkUpdateWeights(
     updates: { id: number; weight: number[] }[],
   ): Promise<any[]> {

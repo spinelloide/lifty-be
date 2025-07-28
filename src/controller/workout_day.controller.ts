@@ -60,8 +60,6 @@ export class WorkoutDayController {
         details: error instanceof Error ? error.message : 'Unknown error',
       };
     }
-
-    return 'ok';
   }
 
   @Put(':id')

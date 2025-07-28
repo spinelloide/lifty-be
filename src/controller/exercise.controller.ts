@@ -71,6 +71,34 @@ export class ExerciseController {
     }
   }
 
+  @Put(':id')
+  async updateExercise(
+    @Param('id') id: string,
+    @Body() updateExerciseDto: Partial<CreateExerciseDto>,
+  ): Promise<Exercise | { message: string; details: string }> {
+    try {
+      const updatedExercise = await this.exerciseService.updateUserExercise(
+        id,
+        updateExerciseDto,
+      );
+      return updatedExercise;
+    } catch (error) {
+      console.error('Error updating exercise:', error);
+
+      if (error instanceof PostgrestError) {
+        return {
+          message: 'Error updating exercise in Supabase',
+          details: error.message,
+        };
+      }
+
+      return {
+        message: 'An unexpected error occurred',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
   @Get('list/:workoutPlanId/:day')
   async getExerciseListByWorkoutIdAndDay(
     @Param('workoutPlanId') workoutPlanId: number,

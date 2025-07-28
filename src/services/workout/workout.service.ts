@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { CreateWorkoutDto } from 'src/dto/create-workout.dto';
 import { MuscleGroup } from 'src/interfaces/MuscleGroup';
 import { WorkoutPlan } from 'src/interfaces/WorkoutPlan';
@@ -53,29 +53,48 @@ export class WorkoutService {
       completed_count,
     } = createWorkoutDto;
 
-    // Map training_days from DTO to days in database schema
-    const { data, error }: { data: WorkoutPlan | null; error: any } =
-      await this.supabase
-        .from('workout_plans')
-        .insert([
-          {
-            title,
-            description,
-            training_days,
-            duration,
-            user_id,
-            completed_count,
-          },
-        ])
-        .select()
-        .single();
+    // 1️⃣ Crea il workout plan
+    const { data: workout, error } = await this.supabase
+      .from('workout_plans')
+      .insert([
+        {
+          title,
+          description,
+          training_days,
+          duration,
+          user_id,
+          completed_count,
+        },
+      ])
+      .select()
+      .single();
 
-    if (error) {
+    if (error || !workout) {
       console.error('Error creating workout plan:', error);
-      throw error;
+      throw error as PostgrestError;
+    }
+    const confirmedWorkout = workout as WorkoutPlan;
+
+    // 2️⃣ Crea i workout_day associati (uno per ogni giorno)
+    const workoutDays = Array.from({ length: training_days }, () => ({
+      workout_plan_id: confirmedWorkout.id,
+      count: completed_count, // stesso valore di "8" che vedo nel tuo screenshot
+    }));
+
+    const { error: dayError } = await this.supabase
+      .from('workout_day') // ❗️ attento: la tabella si chiama 'workout_day', non 'workout_days'
+      .insert(workoutDays);
+
+    if (dayError) {
+      console.error(
+        '❌ Error creating workout_day:',
+        JSON.stringify(dayError, null, 2),
+      );
+      throw dayError;
     }
 
-    return data as WorkoutPlan;
+    // 3️⃣ Ritorna il workout creato
+    return workout as WorkoutPlan;
   }
 
   async deleteWorkoutPlan(id: number): Promise<WorkoutPlan | null> {

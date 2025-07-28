@@ -86,6 +86,7 @@ export class WorkoutController {
     try {
       const newWorkout =
         await this.workoutService.createWorkoutPlan(createWorkoutDto);
+
       return newWorkout;
     } catch (error) {
       console.error('Error creating workout plan:', error);
